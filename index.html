@@ -1,268 +1,192 @@
-
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DHTML Fireplace DVD</title>
-
+<title>DHTML Fireplace</title>
 <style>
 html,body{
     margin:0;
-    overflow:hidden;
-    background:#000;
     height:100%;
-    font-family:Arial;
+    overflow:hidden;
+    background:#050000;
 }
-
 canvas{
     display:block;
-}
-
-#overlay{
-    position:absolute;
-    inset:0;
-    pointer-events:none;
-    background:
-    radial-gradient(circle at center 80%, rgba(255,140,40,.18), transparent 45%),
-    radial-gradient(circle at center 70%, rgba(255,180,80,.08), transparent 60%);
-    mix-blend-mode:screen;
-}
-
-#title{
-    position:absolute;
-    top:18px;
-    width:100%;
-    text-align:center;
-    color:#ffffff66;
-    letter-spacing:8px;
-    font-size:22px;
-    text-transform:uppercase;
-    text-shadow:0 0 15px orange;
-}
-
-#controls{
-    position:absolute;
-    bottom:18px;
-    width:100%;
-    text-align:center;
-    color:#ccc;
-    font-size:14px;
 }
 </style>
 </head>
 
 <body>
 
-<canvas id="c"></canvas>
-
-<div id="overlay"></div>
-
-<div id="title">
-Virtual Fireplace
-</div>
-
-<div id="controls">
-Space = More Flames • F = Fullscreen
-</div>
+<canvas id="fire"></canvas>
 
 <script>
-
-const canvas=document.getElementById("c");
+const canvas=document.getElementById("fire");
 const ctx=canvas.getContext("2d");
 
 function resize(){
-canvas.width=innerWidth;
-canvas.height=innerHeight;
+    canvas.width=innerWidth;
+    canvas.height=innerHeight;
 }
-addEventListener("resize",resize);
 resize();
+window.onresize=resize;
 
 let flames=[];
 let sparks=[];
 
-let intensity=1;
+function rand(a,b){
+    return Math.random()*(b-a)+a;
+}
 
 class Flame{
+    constructor(){
+        this.reset();
+    }
 
-constructor(){
+    reset(){
+        this.x=canvas.width/2+rand(-120,120);
+        this.y=canvas.height-100;
+        this.radius=rand(15,45);
+        this.speed=rand(1,4);
+        this.life=rand(40,100);
+        this.wobble=rand(-1,1);
+    }
 
-this.reset();
+    update(){
+        this.y-=this.speed;
+        this.x+=Math.sin(this.life/10)*this.wobble;
+        this.life--;
 
+        if(this.life<=0)
+            this.reset();
+    }
+
+    draw(){
+
+        let alpha=this.life/100;
+
+        let gradient=ctx.createRadialGradient(
+            this.x,this.y,0,
+            this.x,this.y,this.radius
+        );
+
+        gradient.addColorStop(0,
+            "rgba(255,255,180,"+alpha+")");
+
+        gradient.addColorStop(.25,
+            "rgba(255,220,30,"+alpha+")");
+
+        gradient.addColorStop(.7,
+            "rgba(255,70,0,"+alpha+")");
+
+        gradient.addColorStop(1,
+            "rgba(120,0,0,0)");
+
+        ctx.fillStyle=gradient;
+
+        ctx.beginPath();
+
+        ctx.ellipse(
+            this.x,
+            this.y,
+            this.radius*.45,
+            this.radius,
+            0,0,Math.PI*2
+        );
+
+        ctx.fill();
+    }
 }
 
-reset(){
-
-this.x=canvas.width/2+(Math.random()-0.5)*140;
-this.y=canvas.height-120;
-
-this.vx=(Math.random()-0.5)*0.6;
-
-this.vy=-(2+Math.random()*3);
-
-this.size=25+Math.random()*40;
-
-this.life=1;
-
-this.decay=.008+Math.random()*.012;
-
-this.color=Math.random();
-
-}
-
-update(){
-
-this.x+=this.vx;
-this.y+=this.vy;
-
-this.vx+=(Math.random()-.5)*.08;
-
-this.life-=this.decay;
-
-if(this.life<=0) this.reset();
-
-}
-
-draw(){
-
-ctx.save();
-
-ctx.globalAlpha=this.life;
-
-let g=ctx.createRadialGradient(
-this.x,this.y,0,
-this.x,this.y,this.size
-);
-
-g.addColorStop(0,"rgba(255,255,180,.9)");
-
-if(this.color>.5)
-g.addColorStop(.4,"rgba(255,180,20,.8)");
-else
-g.addColorStop(.4,"rgba(255,80,0,.8)");
-
-g.addColorStop(1,"rgba(0,0,0,0)");
-
-ctx.fillStyle=g;
-
-ctx.beginPath();
-ctx.ellipse(
-this.x,
-this.y,
-this.size*.35,
-this.size,
-0,0,Math.PI*2);
-ctx.fill();
-
-ctx.restore();
-
-}
-
-}
 
 class Spark{
+    constructor(){
+        this.reset();
+    }
 
-constructor(){
+    reset(){
+        this.x=canvas.width/2+rand(-100,100);
+        this.y=canvas.height-120;
+        this.vx=rand(-1,1);
+        this.vy=rand(-5,-2);
+        this.life=rand(20,80);
+    }
 
-this.reset();
+    update(){
+        this.x+=this.vx;
+        this.y+=this.vy;
+        this.life--;
 
+        if(this.life<=0)
+            this.reset();
+    }
+
+    draw(){
+        ctx.fillStyle="orange";
+        ctx.beginPath();
+        ctx.arc(this.x,this.y,2,0,Math.PI*2);
+        ctx.fill();
+    }
 }
 
-reset(){
 
-this.x=canvas.width/2+(Math.random()-.5)*180;
-this.y=canvas.height-120;
-this.vx=(Math.random()-.5)*2;
-this.vy=-(3+Math.random()*4);
-this.life=1;
-this.size=1+Math.random()*3;
+for(let i=0;i<180;i++)
+    flames.push(new Flame());
 
-}
+for(let i=0;i<70;i++)
+    sparks.push(new Spark());
 
-update(){
 
-this.x+=this.vx;
-this.y+=this.vy;
+function logs(){
 
-this.life-=0.012;
+let y=canvas.height-80;
 
-if(this.life<0)
-this.reset();
-
-}
-
-draw(){
-
-ctx.fillStyle=`rgba(255,${180+Math.random()*70},60,${this.life})`;
-
-ctx.beginPath();
-ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
-ctx.fill();
-
-}
-
-}
-
-function build(){
-
-flames=[];
-sparks=[];
-
-for(let i=0;i<140*intensity;i++)
-flames.push(new Flame());
-
-for(let i=0;i<80;i++)
-sparks.push(new Spark());
-
-}
-
-build();
-
-function drawLogs(){
-
-const y=canvas.height-95;
-
-ctx.fillStyle="#2a1208";
+ctx.fillStyle="#3b1808";
 
 ctx.save();
-
 ctx.translate(canvas.width/2,y);
-
-ctx.rotate(.18);
-
-ctx.fillRect(-140,-12,280,24);
-
+ctx.rotate(.25);
+ctx.fillRect(-150,-15,300,30);
 ctx.restore();
 
 ctx.save();
-
 ctx.translate(canvas.width/2,y);
-
-ctx.rotate(-.22);
-
-ctx.fillRect(-140,-12,280,24);
-
+ctx.rotate(-.25);
+ctx.fillRect(-150,-15,300,30);
 ctx.restore();
 
-for(let i=0;i<15;i++){
+}
 
-ctx.fillStyle=`rgba(255,${80+Math.random()*80},0,.5)`;
 
-ctx.beginPath();
+function loop(){
 
-ctx.arc(
-canvas.width/2-70+Math.random()*140,
-y-8+Math.random()*10,
-2+Math.random()*4,
-0,
-Math.PI*2);
+requestAnimationFrame(loop);
 
-ctx.fill();
+ctx.fillStyle="rgba(0,0,0,.15)";
+ctx.fillRect(0,0,canvas.width,canvas.height);
+
+ctx.shadowBlur=40;
+ctx.shadowColor="orange";
+
+flames.forEach(f=>{
+    f.update();
+    f.draw();
+});
+
+ctx.shadowBlur=0;
+
+sparks.forEach(s=>{
+    s.update();
+    s.draw();
+});
+
+logs();
 
 }
 
-}
+loop();
 
-function animate(){
+</script>
 
-requestAnimationFrame(animate
+</body>
+</html>
+

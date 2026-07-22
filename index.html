@@ -1,1 +1,97 @@
-<a href imgsrc='original.gif' ></a>
+Log in
+You said:
+Create one html file of animated dhtml effect like a fireplace dvd
+
+
+ChatGPT said:
+Here is a single self-contained HTML file that creates a DHTML fireplace-style animation with a bouncing “DVD” logo effect. Save it as fireplace_dvd.html and open it in a browser.
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Fireplace DVD Effect</title>
+<style>
+html, body {
+    margin: 0;
+    height: 100%;
+    overflow: hidden;
+    background: #050505;
+}
+
+#fireplace {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    background:
+        radial-gradient(circle at 50% 75%, #ff8c00 0%, #8b2200 25%, #210500 60%, #000 100%);
+    overflow: hidden;
+}
+
+/* Fireplace glow */
+#glow {
+    position: absolute;
+    width: 60vw;
+    height: 60vh;
+    left: 20vw;
+    bottom: -10vh;
+    background: radial-gradient(ellipse, rgba(255,180,0,.8), rgba(255,50,0,0));
+    filter: blur(40px);
+    animation: pulse 2s infinite alternate;
+}
+
+@keyframes pulse {
+    from { transform: scale(0.95); opacity: .7; }
+    to { transform: scale(1.05); opacity: 1; }
+}
+
+/* Logs */
+.log {
+    position: absolute;
+    bottom: 12%;
+    width: 35%;
+    height: 35px;
+    background: linear-gradient(#5b2a0b,#1c0902);
+    border-radius: 20px;
+    box-shadow: 0 0 15px #000;
+}
+
+.log.one {
+    left: 32%;
+    transform: rotate(12deg);
+}
+
+.log.two {
+    left: 35%;
+    transform: rotate(-12deg);
+}
+
+/* Flames */
+.flame {
+    position: absolute;
+    bottom: 20%;
+    border-radius: 50% 50% 20% 20%;
+    background: radial-gradient(circle at 50% 30%, #fff7a0, #ffcc00 25%, #ff3300 65%, transparent 70%);
+    filter: blur(2px);
+    animation: flicker .5s infinite alternate;
+}
+
+.f1 {
+    width: 120px;
+    height: 220px;
+    left: 43%;
+}
+
+.f2 {
+    width: 90px;
+    height: 170px;
+    left: 37%;
+    animation-delay: .2s;
+}
+
+.f3 {
+    width: 80px;
+    height: 150px;
+    left: 53%;
+    animation-delay: .35s;
+}

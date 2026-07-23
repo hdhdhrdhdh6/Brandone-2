@@ -1,53 +1,415 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Apple Style Keyboard</title>
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+
+<title>Emulated Android Keyboard</title>
 
 <style>
+
 *{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",sans-serif;
+margin:0;
+padding:0;
+box-sizing:border-box;
+-webkit-tap-highlight-color:transparent;
+font-family:Arial,sans-serif;
 }
 
-body{
-    background:#000;
-    overflow:hidden;
-    height:100vh;
+html,body{
+width:100%;
+height:100%;
+overflow:hidden;
+background:#000;
+color:#fff;
 }
 
-/* Empty page area */
-.content{
-    height:75vh;
-    background:#000;
-}
- 
-/* Keyboard */
-.keyboard{
-    position:fixed;
-    left:0;
-    bottom:0;
-    width:100%;
-    height:25vh;
-    background:#1c1c1e;
-    padding:10px 8px calc(env(safe-area-inset-bottom) + 8px);
-    display:flex;
-    flex-direction:column;
-    justify-content:space-evenly;
-    user-select:none;
+#screen{
+position:absolute;
+top:0;
+left:0;
+width:100%;
+height:75%;
+padding:20px;
+display:flex;
+align-items:flex-start;
+justify-content:flex-start;
 }
 
-/* Rows */
+#display{
+width:100%;
+height:100%;
+border:none;
+outline:none;
+background:#000;
+color:#fff;
+font-size:28px;
+resize:none;
+}
+
+#keyboard{
+position:absolute;
+left:0;
+bottom:0;
+width:100%;
+height:25%;
+background:#1f1f1f;
+padding:6px;
+display:flex;
+flex-direction:column;
+justify-content:space-between;
+}
+
 .row{
-    display:flex;
-    justify-content:center;
-    gap:6px;
+display:flex;
+justify-content:center;
+gap:4px;
 }
 
-/* Keys */
 .key{
-    flex:1;
-    max-width:42px;
+background:#3a3a3a;
+color:#fff;
+border-radius:8px;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:18px;
+height:44px;
+flex:1;
+user-select:none;
+cursor:pointer;
+transition:.05s;
+box-shadow:
+0 2px 3px rgba(0,0,0,.4),
+inset 0 1px rgba(255,255,255,.1);
+}
+
+.key:active{
+background:#666;
+transform:scale(.96);
+}
+
+.wide{
+flex:1.5;
+}
+
+.space{
+flex:5;
+}
+
+.enter{
+flex:2;
+}
+
+.hidden{
+display:none;
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="screen">
+<textarea id="display"
+placeholder="Type here..."
+spellcheck="false"></textarea>
+</div>
+
+<div id="keyboard">
+
+<div class="letters">
+
+<div class="row">
+<div class="key">Q</div>
+<div class="key">W</div>
+<div class="key">E</div>
+<div class="key">R</div>
+<div class="key">T</div>
+<div class="key">Y</div>
+<div class="key">U</div>
+<div class="key">I</div>
+<div class="key">O</div>
+<div class="key">P</div>
+</div>
+
+<div class="row">
+<div class="key">A</div>
+<div class="key">S</div>
+<div class="key">D</div>
+<div class="key">F</div>
+<div class="key">G</div>
+<div class="key">H</div>
+<div class="key">J</div>
+<div class="key">K</div>
+<div class="key">L</div>
+</div>
+
+<div class="row">
+<div class="key wide" id="shift">⇧</div>
+<div class="key">Z</div>
+<div class="key">X</div>
+<div class="key">C</div>
+<div class="key">V</div>
+<div class="key">B</div>
+<div class="key">N</div>
+<div class="key">M</div>
+<div class="key wide" id="back">⌫</div>
+</div>
+
+<div class="row">
+<div class="key wide" id="nums">123</div>
+<div class="key space" id="space">SPACE</div>
+<div class="key enter" id="enter">ENTER</div>
+</div>
+
+</div>
+
+<div class="numbers hidden">
+
+<div class="row">
+<div class="key">1</div>
+<div class="key">2</div>
+<div class="key">3</div>
+<div class="key">4</div>
+<div class="key">5</div>
+<div class="key">6</div>
+<div class="key">7</div>
+<div class="key">8</div>
+<div class="key">9</div>
+<div class="key">0</div>
+</div>
+
+<div class="row">
+<div class="key">@</div>
+<div class="key">#</div>
+<div class="key">$</div>
+<div class="key">%</div>
+<div class="key">&</div>
+<div class="key">*</div>
+<div class="key">-</div>
+<div class="key">+</div>
+<div class="key">(</div>
+<div class="key">)</div>
+</div>
+
+<div class="row">
+<div class="key wide" id="abc">ABC</div>
+<div class="key">.</div>
+<div class="key">,</div>
+<div class="key">?</div>
+<div class="key">!</div>
+<div class="key">:</div>
+<div class="key">;</div>
+<div class="key wide" id="back2">⌫</div>
+</div>
+
+<div class="row">
+<div class="key space" id="space2">SPACE</div>
+<div class="key enter" id="enter2">ENTER</div>
+</div>
+
+</div>
+
+</div>
+
+<script>
+const display = document.getElementById("display");
+
+let upper = true;
+
+const letters = document.querySelector(".letters");
+const numbers = document.querySelector(".numbers");
+
+function insertText(text){
+
+const start = display.selectionStart;
+const end = display.selectionEnd;
+
+display.setRangeText(text,start,end,"end");
+display.focus();
+
+}
+
+function backspace(){
+
+const start = display.selectionStart;
+const end = display.selectionEnd;
+
+if(start!==end){
+
+display.setRangeText("",start,end,"end");
+
+}else if(start>0){
+
+display.setRangeText("",start-1,start,"end");
+
+}
+
+display.focus();
+
+}
+
+function enter(){
+
+insertText("\n");
+
+}
+
+function space(){
+
+insertText(" ");
+
+}
+
+function refreshLetters(){
+
+document.querySelectorAll(".letters .key").forEach(k=>{
+
+const t=k.textContent;
+
+if(t.length===1 && /[A-Za-z]/.test(t)){
+
+k.textContent=upper?t.toUpperCase():t.toLowerCase();
+
+}
+
+});
+
+}
+
+refreshLetters();
+
+document.getElementById("shift").onclick=()=>{
+
+upper=!upper;
+refreshLetters();
+
+};
+
+document.getElementById("back").onclick=backspace;
+document.getElementById("back2").onclick=backspace;
+
+document.getElementById("space").onclick=space;
+document.getElementById("space2").onclick=space;
+
+document.getElementById("enter").onclick=enter;
+document.getElementById("enter2").onclick=enter;
+
+document.getElementById("nums").onclick=()=>{
+
+letters.classList.add("hidden");
+numbers.classList.remove("hidden");
+
+};
+
+document.getElementById("abc").onclick=()=>{
+
+numbers.classList.add("hidden");
+letters.classList.remove("hidden");
+
+};
+
+document.querySelectorAll(".letters .key").forEach(key=>{
+
+const txt=key.textContent;
+
+if(
+txt==="⇧"||
+txt==="⌫"||
+txt==="123"||
+txt==="SPACE"||
+txt==="ENTER"
+)return;
+
+key.onclick=()=>{
+
+insertText(key.textContent);
+
+};
+
+});
+
+document.querySelectorAll(".numbers .key").forEach(key=>{
+
+const txt=key.textContent;
+
+if(
+txt==="ABC"||
+txt==="⌫"||
+txt==="SPACE"||
+txt==="ENTER"
+)return;
+
+key.onclick=()=>{
+
+insertText(key.textContent);
+
+};
+
+});
+
+display.addEventListener("keydown",e=>{
+
+e.preventDefault();
+
+});
+
+display.focus();
+// Touch feedback and click handling
+document.querySelectorAll(".key").forEach(key=>{
+
+    key.addEventListener("touchstart",()=>{
+        key.style.transform="scale(.94)";
+        key.style.background="#6b6b6b";
+    },{passive:true});
+
+    key.addEventListener("touchend",()=>{
+        key.style.transform="";
+        key.style.background="";
+    });
+
+    key.addEventListener("mousedown",()=>{
+        key.style.transform="scale(.94)";
+        key.style.background="#6b6b6b";
+    });
+
+    key.addEventListener("mouseup",()=>{
+        key.style.transform="";
+        key.style.background="";
+    });
+
+    key.addEventListener("mouseleave",()=>{
+        key.style.transform="";
+        key.style.background="";
+    });
+
+});
+
+// Keep focus on the textarea
+document.addEventListener("click",()=>{
+
+    display.focus();
+
+});
+
+// Prevent the browser from showing the native keyboard
+display.setAttribute("readonly","readonly");
+
+// Allow the caret to be positioned
+display.addEventListener("pointerdown",(e)=>{
+
+    display.removeAttribute("readonly");
+
+    setTimeout(()=>{
+        display.setAttribute("readonly","readonly");
+    },50);
+
+});
+</script>
+
+</body>
+</html>
+
+

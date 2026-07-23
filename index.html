@@ -1,9 +1,53 @@
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-6LX709JY8C"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Apple Style Keyboard</title>
 
-  gtag('config', 'G-6LX709JY8C');
-</script>
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",sans-serif;
+}
+
+body{
+    background:#000;
+    overflow:hidden;
+    height:100vh;
+}
+
+/* Empty page area */
+.content{
+    height:75vh;
+    background:#000;
+}
+
+/* Keyboard */
+.keyboard{
+    position:fixed;
+    left:0;
+    bottom:0;
+    width:100%;
+    height:25vh;
+    background:#1c1c1e;
+    padding:10px 8px calc(env(safe-area-inset-bottom) + 8px);
+    display:flex;
+    flex-direction:column;
+    justify-content:space-evenly;
+    user-select:none;
+}
+
+/* Rows */
+.row{
+    display:flex;
+    justify-content:center;
+    gap:6px;
+}
+
+/* Keys */
+.key{
+    flex:1;
+    max-width:42px;
